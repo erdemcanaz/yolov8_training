@@ -1,8 +1,12 @@
 import os
 from PIL import Image
+import uuid, datetime
 
-def rename_images(folder_path):
+def rename_images(folder_path, title:str= None):
     # List all files in the directory
+    if title is None or title == "":
+        title = "no_title"
+
     files = os.listdir(folder_path)
     
     # Filter only files with image extensions (you can add more extensions if needed)
@@ -16,7 +20,7 @@ def rename_images(folder_path):
         file_extension = os.path.splitext(image)[1]
         
         # Create the new name with leading zeros up to 5 digits
-        new_name = f"hardhat_data_{index:05}_16_08_2024{file_extension}"
+        new_name = f"{title}_{index:05}-{datetime.datetime.now().strftime('%Y_%m_%d-%H_%M')}_{uuid.uuid4()}{file_extension}"
         
         # Get the full old and new file paths
         old_file = os.path.join(folder_path, image)
@@ -44,9 +48,10 @@ def convert_to_jpg(image_path):
         print(f"Deleted: {image_path}")
 
 # Example usage
-folder_path = input("Dosya konumu: ")
+folder_path = input("Resimlerin konumu: ")
+title = input("Resim ön adı: ")
 
-rename_images(folder_path)
+rename_images(folder_path, title)
 
 # Convert images to JPG
 for file in os.listdir(folder_path):
