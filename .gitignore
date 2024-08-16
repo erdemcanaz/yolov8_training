@@ -4,6 +4,10 @@
 # Ignore yolo models
 *.pt
 
+# Ignore text files
+*.txt
+
+
 local/*
 !local/.gitkeep
 
