@@ -1,30 +1,36 @@
-import cv2
-import cv2
 import os
 import random
 import shutil
 
-# Set the source and destination folders
-source_folder = input("Enter the source folder path: ")
-destination_folder = input("Enter the destination folder path: ")
-p = float(input("Enter the sampling probability: "))
+def get_image_files(folder):
+    """Get the list of image files in the given folder."""
+    return {f for f in os.listdir(folder) if f.endswith('.jpg') or f.endswith('.png')}
 
-# Get the list of image files in the source folder
-image_files = [f for f in os.listdir(source_folder) if f.endswith('.jpg') or f.endswith('.png')]
+def main():
+    # Set the source and destination folders
+    source_folder = input("Enter the source folder path: ")
+    destination_folder = input("Enter the destination folder path: ")
+    num_frames_to_copy = int(input("Enter the number of frames to copy: "))
 
-# Iterate over the image files
-for image_file in image_files:
-    # Generate a random number between 0 and 1
-    random_number = random.random()
-    
-    # Check if the random number is less than the probability
-    if random_number < p:
+    # Get the list of image files in the source and destination folders
+    source_images = get_image_files(source_folder)
+    destination_images = get_image_files(destination_folder)
 
-        # Construct the source and destination paths
+    # Determine which images are not present in the destination folder
+    images_to_copy = list(source_images - destination_images)
+
+    # If there are fewer images to copy than requested, adjust the number
+    num_frames_to_copy = min(num_frames_to_copy, len(images_to_copy))
+
+    # Randomly select the images to copy
+    selected_images = random.sample(images_to_copy, num_frames_to_copy)
+
+    # Copy the selected images
+    for image_file in selected_images:
         source_path = os.path.join(source_folder, image_file)
         destination_path = os.path.join(destination_folder, image_file)
-        
-        # Copy the image file to the destination folder
         shutil.copyfile(source_path, destination_path)
-
         print(f"Image file {image_file} copied to {destination_folder}")
+
+if __name__ == "__main__":
+    main()

@@ -50,14 +50,17 @@ class YOLOWrapper:
     def get_recent_detection_results(self) -> dict:
         return self.recent_detection_results
     
-    def draw_recent_bbox_on_frame(self, frame:np.ndarray, color:tuple=(0, 255, 0), thickness:int=2) -> np.ndarray:
+    def draw_recent_bbox_on_frame(self, frame:np.ndarray, color:tuple=(0, 255, 0), thickness:int=2, text_thickness:int = 3) -> np.ndarray:
         for bbox in self.recent_detection_results["normalized_bboxes"]:
             x1, y1, x2, y2 = bbox[0]*frame.shape[1], bbox[1]*frame.shape[0], bbox[2]*frame.shape[1], bbox[3]*frame.shape[0]
             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
-            print(f"Drawing bbox: {x1, y1, x2, y2}")
+            cv2.putText(frame, f"{bbox[4]:.2f} {bbox[5]}", (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness)
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness)
       
+    def is_any_detection(self) -> bool:
+        return len(self.recent_detection_results["normalized_bboxes"]) > 0
+    
 IMAGE_FOLDER_PATH = input("Enter the path to the folder containing images: ")
 MODEL_PATH = input("Enter the path to the YOLO model: ")
 
@@ -74,7 +77,9 @@ for image_path in image_paths:
     resized_image = cv2.resize(image, (800, 600))
     cv2.imshow("Image", resized_image)
 
-    key = cv2.waitKey(0) & 0xFF
+    wait_time = 2500 if yolo_model_to_test.is_any_detection() else 50
+
+    key = cv2.waitKey(wait_time) & 0xFF
     if key == 27:  # 27 is the ASCII code for the ESC key
         break
 
