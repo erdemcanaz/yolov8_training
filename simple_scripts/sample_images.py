@@ -10,14 +10,16 @@ def main():
     # Set the source and destination folders
     source_folder = input("Enter the source folder path: ")
     destination_folder = input("Enter the destination folder path: ")
+    compare_folder = input("Enter the folder to compare: ")
     num_frames_to_copy = int(input("Enter the number of frames to copy: "))
 
     # Get the list of image files in the source and destination folders
     source_images = get_image_files(source_folder)
     destination_images = get_image_files(destination_folder)
+    compare_folder_images = get_image_files(compare_folder)
 
     # Determine which images are not present in the destination folder
-    images_to_copy = list(source_images - destination_images)
+    images_to_copy = list(source_images - compare_folder_images)
 
     # If there are fewer images to copy than requested, adjust the number
     num_frames_to_copy = min(num_frames_to_copy, len(images_to_copy))

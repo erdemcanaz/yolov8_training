@@ -6,8 +6,8 @@ import numpy as np
 # Paths to the folders
 EXPORT_FOLDER_PATH = Path(__file__).resolve().parent.parent / "exports" # where labels will be saved
 
-SHOW_ZOOMED_PERSON = True
-WAIT_SHOW_ZOOMED_PERSON = 250
+SHOW_ZOOMED_PERSON = False
+WAIT_SHOW_ZOOMED_PERSON = 0
 POSE_DETECTOR_CONFIDENCE_THRESHOLD = 0.5
 
 read_folder = input("Enter the path to the folder containing images: ")

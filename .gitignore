@@ -7,6 +7,9 @@
 # Ignore text files
 *.txt
 
+# Ignore training results
+training_results/*
+
 local/*
 !local/.gitkeep
 
