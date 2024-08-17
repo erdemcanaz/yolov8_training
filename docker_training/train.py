@@ -16,11 +16,11 @@ def ensure_if_training_folder_is_proper(folder_path:str = None):
         raise Exception(f"Path is not a folder: {folder_path}")
     
 def ensure_if_data_folder_to_be_trained_on_is_proper(folder_path:str = None):
-    if not os.path.exists(folder_path + "/images"):
+    if not os.path.exists(folder_path  / "images"):
         raise Exception(f"Folder does not contain 'images' folder: {folder_path}")
-    if not os.path.exists(folder_path + "/labels"):
+    if not os.path.exists(folder_path / "labels"):
         raise Exception(f"Folder does not contain 'labels' folder: {folder_path}")
-    if not os.path.exists(folder_path + "/data.yaml"):
+    if not os.path.exists(folder_path / "data.yaml"):
         raise Exception(f"Folder does not contain 'data.yaml' file: {folder_path}")
     
 def get_available_models_in_folder(folder_path:str = None):
@@ -32,7 +32,7 @@ def get_available_models_in_folder(folder_path:str = None):
 
 def createa_training_results_folder_if_not_exists(folder_path:str = None):
     if not "training_results" in os.listdir(folder_path):
-        os.mkdir(folder_path + "/training_results")
+        os.mkdir(folder_path / "training_results")
         
 def start_training(data_folder:str = None , available_model_paths:list = None):
     print(f" torch.cuda.device_count(): {torch.cuda.device_count()}")
@@ -103,7 +103,6 @@ ensure_if_training_folder_is_proper(folder_path = training_folder)
 
 # Get the data folder
 data_folder_name = input("Enter the path to the folder containing data: ")
-if data_folder_name == "": raise Exception("Data folder name cannot be empty")
 data_folder = Path(__file__).resolve().parent.parent.parent / volume_name / data_folder_name
 ensure_if_data_folder_to_be_trained_on_is_proper(folder_path = data_folder)
 createa_training_results_folder_if_not_exists(folder_path=  data_folder)
