@@ -112,4 +112,3 @@ available_model_paths = get_available_models_in_folder(folder_path = training_fo
 start_training(data_folder = data_folder ,available_model_paths = available_model_paths)
 
 
-
