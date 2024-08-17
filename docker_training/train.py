@@ -103,6 +103,7 @@ ensure_if_training_folder_is_proper(folder_path = training_folder)
 
 # Get the data folder
 data_folder_name = input("Enter the path to the folder containing data: ")
+if data_folder_name == "": raise Exception("Data folder name cannot be empty")
 data_folder = Path(__file__).resolve().parent.parent.parent / volume_name / data_folder_name
 ensure_if_data_folder_to_be_trained_on_is_proper(folder_path = data_folder)
 createa_training_results_folder_if_not_exists(folder_path=  data_folder)
