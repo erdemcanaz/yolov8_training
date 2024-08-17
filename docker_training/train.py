@@ -16,10 +16,12 @@ def ensure_if_training_folder_is_proper(folder_path:str = None):
         raise Exception(f"Path is not a folder: {folder_path}")
     
 def ensure_if_data_folder_to_be_trained_on_is_proper(folder_path:str = None):
+    if not os.path.exists(folder_path):
+        raise Exception(f"Folder does not exist: {folder_path}")
     if not os.path.exists(folder_path  / "data"/ "images"):
-        raise Exception(f"Folder does not contain 'images' folder: {folder_path / 'data'/ 'images'}")
+        raise Exception(f"Folder does not contain 'images' folder: {folder_path}")
     if not os.path.exists(folder_path / "data"/ "labels"):
-        raise Exception(f"Folder does not contain 'labels' folder: {folder_path/ 'data'/ 'labels'}")
+        raise Exception(f"Folder does not contain 'labels' folder: {folder_path}")
     if not os.path.exists(folder_path / "data.yaml"):
         raise Exception(f"Folder does not contain 'data.yaml' file: {folder_path}")
     
