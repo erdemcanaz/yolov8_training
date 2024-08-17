@@ -30,20 +30,15 @@ def get_available_models_in_folder(folder_path: str = None):
     
     # Walk through all directories and subdirectories
     for root, dirs, files in os.walk(folder_path):
-        print(f"folder_path: {folder_path}")
-        print(f"dirs: {dirs}")
         for file in files:
 
             if file.endswith(".pt"):
                 # Get the full path of the file
                 full_path = os.path.join(root, file)
                 available_models.append(full_path)
-                print(f"full_path: {full_path}")
     
     # Sort the files by modification time (newest first)
     available_models.sort(key=os.path.getmtime, reverse=True)    
-    # Extract just the filenames with relative paths
-    available_models = [os.path.relpath(file, folder_path) for file in available_models]    
     return available_models[:10] # Return the first 20 models
 
 def createa_training_results_folder_if_not_exists(folder_path:str = None):
