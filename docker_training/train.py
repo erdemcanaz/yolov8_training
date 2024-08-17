@@ -78,8 +78,12 @@ def start_training(data_folder:str = None , available_model_paths:list = None):
     
     number_of_epochs = int(input("Enter the number of epochs: "))
     save_period = int(input("Enter the save period: "))
-    batch_size = min(0.75, float(input("Enter the batch size (percentage): ")))
-
+    batch_size = float(input("Enter the batch size: "))
+    if batch_size > 1:
+        batch_size = int(batch_size)
+    else:
+        batch_size = min(0.75, batch_size)
+        
     model.train(
         data=data_yaml_file,
         classes = class_indexes_to_train_on,
