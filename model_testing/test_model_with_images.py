@@ -63,6 +63,7 @@ class YOLOWrapper:
     
 IMAGE_FOLDER_PATH = input("Enter the path to the folder containing images: ")
 MODEL_PATH = input("Enter the path to the YOLO model: ")
+WAIT_TIME = float(input("Enter the wait time in milliseconds when detected: "))
 
 image_paths = return_image_paths(IMAGE_FOLDER_PATH)
 yolo_model_to_test = YOLOWrapper(MODEL_PATH)
@@ -77,7 +78,7 @@ for image_path in image_paths:
     resized_image = cv2.resize(image, (800, 600))
     cv2.imshow("Image", resized_image)
 
-    wait_time = 2500 if yolo_model_to_test.is_any_detection() else 50
+    wait_time = int(WAIT_TIME) if yolo_model_to_test.is_any_detection() else 100
 
     key = cv2.waitKey(wait_time) & 0xFF
     if key == 27:  # 27 is the ASCII code for the ESC key
