@@ -30,8 +30,10 @@ def get_available_models_in_folder(folder_path: str = None):
     
     # Walk through all directories and subdirectories
     for root, dirs, files in os.walk(folder_path):
-
+        print(f"folder_path: {folder_path}")
+        print(f"dirs: {dirs}")
         for file in files:
+
             if file.endswith(".pt"):
                 # Get the full path of the file
                 full_path = os.path.join(root, file)
