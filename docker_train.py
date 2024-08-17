@@ -29,8 +29,11 @@ def get_available_models_in_folder(folder_path: str = None):
     available_models = []
     
     # Walk through all directories and subdirectories
+    print(f"folder_path: {folder_path}")
     for root, dirs, files in os.walk(folder_path):
+
         for file in files:
+            print(f"file: {file}")
             if file.endswith(".pt"):
                 # Get the full path of the file
                 full_path = os.path.join(root, file)
@@ -110,7 +113,7 @@ def start_training(data_folder:str = None , available_model_paths:list = None):
 
 # Get the volume name
 volume_name = input("Enter the name of the volume where 'training_data_folder' folder is: ")
-volume_path = Path(__file__).resolve().parent.parent.parent / volume_name
+volume_path = Path(__file__).resolve().parent.parent / volume_name
 ensure_if_volume_is_proper(volume_path)
 
 # Get the training data folder
