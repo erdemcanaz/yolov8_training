@@ -38,6 +38,7 @@ def get_available_models_in_folder(folder_path: str = None):
                 # Get the full path of the file
                 full_path = os.path.join(root, file)
                 available_models.append(full_path)
+                print(f"full_path: {full_path}")
     
     # Sort the files by modification time (newest first)
     available_models.sort(key=os.path.getmtime, reverse=True)    
