@@ -7,8 +7,8 @@ import numpy as np
 EXPORT_FOLDER_PATH = Path(__file__).resolve().parent.parent / "exports" # where labels will be saved
 
 SHOW_ZOOMED_PERSON = True
-WAIT_SHOW_ZOOMED_PERSON = 250
-POSE_DETECTOR_CONFIDENCE_THRESHOLD = 0.2
+WAIT_SHOW_ZOOMED_PERSON = 0
+DETECTOR_CONFIDENCE_THRESHOLD = 0.5
 
 read_folder = input("Enter the path to the folder containing images: ")
 #================================================================================================
@@ -25,7 +25,7 @@ class YOLOWrapper:
             "keypoints": [] # List of keypoints in the format [x, y, confidence]
         }
 
-    def detect_frame(self, frame:np.ndarray = None, confidence_threshold:float = POSE_DETECTOR_CONFIDENCE_THRESHOLD) -> None:
+    def detect_frame(self, frame:np.ndarray = None, confidence_threshold:float = DETECTOR_CONFIDENCE_THRESHOLD) -> None:
         self.__clear_recent_detection_results()
 
         detections = self.yolo_object(frame, task = "detect",)[0]
@@ -40,7 +40,7 @@ class YOLOWrapper:
             
             self.recent_detection_results["normalized_bboxes"].append([box_xyxyn[0], box_xyxyn[1], box_xyxyn[2], box_xyxyn[3], box_conf, box_cls_name, box_cls_no])
     
-    def pose_frame(self, frame:np.ndarray = None, confidence_threshold:float = POSE_DETECTOR_CONFIDENCE_THRESHOLD) -> None:
+    def pose_frame(self, frame:np.ndarray = None, confidence_threshold:float = DETECTOR_CONFIDENCE_THRESHOLD) -> None:
         self.__clear_recent_detection_results()
 
         pose_results = self.yolo_object(frame, task = "pose")[0]
@@ -102,7 +102,7 @@ class SAMWrapper:
         x, y, w, h = cv2.boundingRect(contours[0])
         return [x, y, x+w, y+h]
     
-    def segment_by_rect(self, frame:np.ndarray = None, normalized_bbox_coordinates:list = None) -> None:
+    def segment_by_rect(self, frame:np.ndarray = None, normalized_bbox_coordinates:list = None, class_name:str = None) -> None:
         self.__clear_recent_segmentation_results()
         
         bbox = [normalized_bbox_coordinates[0]*frame.shape[1], normalized_bbox_coordinates[1]*frame.shape[0], normalized_bbox_coordinates[2]*frame.shape[1], normalized_bbox_coordinates[3]*frame.shape[0]]
@@ -121,7 +121,9 @@ class SAMWrapper:
                 min_x = min(min_x, x)
                 min_y = min(min_y, y)
 
-        cv2.rectangle(frame, (int(min_x), int(min_y)), (int(max_x), int(max_y)), (0, 255, 0), 2)   
+        color = (0,255,0) if class_name == "hard_hat" else (0,0,255)
+        cv2.putText(frame, f"{class_name}", (int(min_x), int(min_y)-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+        cv2.rectangle(frame, (int(min_x), int(min_y)), (int(max_x), int(max_y)), color, 2)   
         return [int(min_x), int(min_y), int(max_x), int(max_y)]        
         
 def delete_files_in_folder(folder_path):
@@ -183,7 +185,7 @@ image_paths = return_image_paths(read_folder)
 for image_path in image_paths:
     image = load_image(image_path)
 
-    yolo_model.detect_frame(frame = image, confidence_threshold = POSE_DETECTOR_CONFIDENCE_THRESHOLD)    
+    yolo_model.detect_frame(frame = image, confidence_threshold = DETECTOR_CONFIDENCE_THRESHOLD)    
     #yolo_model.draw_recent_bbox_on_frame(frame = image)
 
     detection_bboxes = []
@@ -196,24 +198,24 @@ for image_path in image_paths:
         
     segmented_bboxes = []
     for detection_bbox in detection_bboxes:
-        segment_bbox = sam2_model.segment_by_rect(frame = image, normalized_bbox_coordinates = detection_bbox[:4])
+        segment_bbox = sam2_model.segment_by_rect(frame = image, normalized_bbox_coordinates = detection_bbox[:4], class_name = detection_bbox[5])
         segment_bbox.extend(detection_bbox[4:])
         segmented_bboxes.append(segment_bbox)
     
-    pprint.pprint(segmented_bboxes)
-
     label_file_path = EXPORT_FOLDER_PATH / f"{Path(image_path).stem}.txt"
-    with open(label_file_path, 'w') as label_file:
-        for segmented_bbox in segmented_bboxes:
-            class_id = int(segmented_bbox[6])
-            xcn, ycn, wn, hn = (segmented_bbox[0] + segmented_bbox[2]) / 2 / image.shape[1], (segmented_bbox[1] + segmented_bbox[3]) / 2 / image.shape[0], (segmented_bbox[2] - segmented_bbox[0]) / image.shape[1], (segmented_bbox[3] - segmented_bbox[1]) / image.shape[0] 
-            label_file.write(f"{class_id} {xcn} {ycn} {wn} {hn}\n")
 
     if SHOW_ZOOMED_PERSON:
         cv2.imshow("Person Head Segments", image)
         key = cv2.waitKey(WAIT_SHOW_ZOOMED_PERSON) & 0xFF
         if key == 27:  # ESC key to break the loop
             break
-
+        elif key == ord('s'):
+            print(f"Saving: {label_file_path}")
+            with open(label_file_path, 'w') as label_file:
+                for segmented_bbox in segmented_bboxes:
+                    class_id = int(segmented_bbox[6])
+                    xcn, ycn, wn, hn = (segmented_bbox[0] + segmented_bbox[2]) / 2 / image.shape[1], (segmented_bbox[1] + segmented_bbox[3]) / 2 / image.shape[0], (segmented_bbox[2] - segmented_bbox[0]) / image.shape[1], (segmented_bbox[3] - segmented_bbox[1]) / image.shape[0] 
+                    label_file.write(f"{class_id} {xcn} {ycn} {wn} {hn}\n")
+            
         
 cv2.destroyAllWindows()

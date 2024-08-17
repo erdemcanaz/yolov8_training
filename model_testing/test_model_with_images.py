@@ -35,7 +35,7 @@ class YOLOWrapper:
             "normalized_bboxes": [] # List of normalized bounding boxes in the format [x1n, y1n, x2n, y2n, bbox_confidence, class_name]
         }
 
-    def detect_frame(self, frame:np.ndarray = None):
+    def detect_frame(self, frame:np.ndarray = None, confidence_threshold:float = 0.75) -> None:
         self.__clear_recent_detection_results()
 
         detections = self.yolo_object(frame, task = "detect",)[0]
@@ -44,6 +44,7 @@ class YOLOWrapper:
             box_cls_no = int(boxes.cls.cpu().numpy()[0])
             box_cls_name = self.yolo_object.names[box_cls_no]            
             box_conf = boxes.conf.cpu().numpy()[0]
+            if box_conf < confidence_threshold: continue
             box_xyxyn = boxes.xyxyn.cpu().numpy()[0]
             self.recent_detection_results["normalized_bboxes"].append([box_xyxyn[0], box_xyxyn[1], box_xyxyn[2], box_xyxyn[3], box_conf, box_cls_name])
     
@@ -63,7 +64,9 @@ class YOLOWrapper:
     
 IMAGE_FOLDER_PATH = input("Enter the path to the folder containing images: ")
 MODEL_PATH = input("Enter the path to the YOLO model: ")
+CONFIDENCE_THRESHOLD = float(input("Enter the confidence threshold: "))
 WAIT_TIME = float(input("Enter the wait time in milliseconds when detected: "))
+
 
 image_paths = return_image_paths(IMAGE_FOLDER_PATH)
 yolo_model_to_test = YOLOWrapper(MODEL_PATH)
@@ -72,7 +75,7 @@ cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
 for image_path in image_paths:
     image = load_image(image_path)
 
-    yolo_model_to_test.detect_frame(frame = image)
+    yolo_model_to_test.detect_frame(frame = image, confidence_threshold= CONFIDENCE_THRESHOLD)
     yolo_model_to_test.draw_recent_bbox_on_frame(frame = image)
     
     resized_image = cv2.resize(image, (800, 600))

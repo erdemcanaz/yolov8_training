@@ -1,5 +1,5 @@
 import os
-
+import cv2
 # Set your directories here
 images_dir = input("Enter the path to the images folder: ")
 labels_dir = input("Enter the path to the labels folder: ")
@@ -14,7 +14,7 @@ label_basenames = set(os.path.splitext(f)[0] for f in label_files)
 
 # Find images without labels and labels without images
 unpaired_images = image_basenames - label_basenames
-unpaired_labels = label_basenames - image_basenames
+unpaired_labels = label_basenames - image_basenames - {'classes'}
 
 
 number_of_unpaired_images = len(unpaired_images)
@@ -27,13 +27,30 @@ if should_continue != 'y':
     print("Exiting...")
     exit()
     
-# Delete unpaired images
+# Show and delete unpaired images if 'x' is pressed
 for image in unpaired_images:
     image_path = os.path.join(images_dir, image + '.jpg')
     if not os.path.exists(image_path):  # If the image is .png instead of .jpg
         image_path = os.path.join(images_dir, image + '.png')
-    print(f"Deleting unpaired image: {image_path}")
-    os.remove(image_path)
+    
+    # Check if the image exists
+    if os.path.exists(image_path):
+        # Load the image using OpenCV
+        img = cv2.imread(image_path)
+        
+        # Display the image
+        cv2.imshow('Image', img)
+        
+        # Wait for a key press
+        key = cv2.waitKey(0) & 0xFF
+        
+        # If 'x' is pressed, delete the image
+        if key == ord('x'):
+            print(f"Deleting unpaired image: {image_path}")
+            os.remove(image_path)
+        
+        # Close the image window
+        cv2.destroyAllWindows()
 
 # Delete unpaired labels
 for label in unpaired_labels:
