@@ -56,8 +56,13 @@ class YOLOWrapper:
             x1, y1, x2, y2 = bbox[0]*frame.shape[1], bbox[1]*frame.shape[0], bbox[2]*frame.shape[1], bbox[3]*frame.shape[0]
             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
-            cv2.putText(frame, f"{bbox[4]:.2f} {bbox[5]}", (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness)
-            cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness)
+            if(bbox[5] =='defect'):
+                _color = (0, 0, 255)
+            else:
+                _color = color
+
+            cv2.putText(frame, f"{bbox[4]:.2f} {bbox[5]}", (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, _color, text_thickness)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), _color, thickness)
       
     def is_any_detection(self) -> bool:
         return len(self.recent_detection_results["normalized_bboxes"]) > 0

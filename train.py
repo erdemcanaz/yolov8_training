@@ -32,7 +32,7 @@ def main():
     model.train(
         data=yaml_file,
         classes = [0,1],
-        epochs=25, 
+        epochs=150, 
         save_dir=save_dir, 
         project=save_dir,
         name=experiment,
@@ -47,7 +47,7 @@ def main():
         hsv_h=0.0, #(0.0 - 1.0) Adjusts the hue of the image by a fraction of the color wheel, introducing color variability. Helps the model generalize across different lighting conditions.
         hsv_s=0.0, #(0.0 - 1.0) Adjusts the saturation of the image by a fraction of the color wheel, introducing color variability. Helps the model generalize across different lighting conditions.
         hsv_v=0.0, #(0.0 - 1.0) Adjusts the value of the image by a fraction of the color wheel, introducing color variability. Helps the model generalize across different lighting conditions.
-        degrees=0, #(0.0 - 180.0) Rotates the image by a random angle within the specified range. Helps the model generalize across different orientations.
+        degrees=180, #(0.0 - 180.0) Rotates the image by a random angle within the specified range. Helps the model generalize across different orientations.
         translate = 0.0, #(0.0 - 1.0) Translates the image by a random fraction of the image size. Helps the model generalize across different positions.
         scale = 0.0, #(0.0 - 1.0) Scales the image by a random factor. Helps the model generalize across different scales.
         shear = 0.0, #(0.0 - 1.0) Shears the image by a random angle within the specified range. Helps the model generalize across different perspectives.
@@ -55,10 +55,10 @@ def main():
         flipud = 0.0, #(0.0 - 1.0) Flips the image vertically. Helps the model generalize across different orientations.
         fliplr = 0.0, #(0.0 - 1.0) Flips the image horizontally. Helps the model generalize across different orientations.
         bgr = False, #Converts the image from RGB to BGR. May improve performance on some hardware.
-        mosaic = 0.0, #(0.0 - 1.0) Adds mosaic augmentation to the image. Helps the model generalize across different positions, scales, and perspectives.
-        mixup = 0.0, #(0.0 - 1.0) Adds mixup augmentation to the image. Helps the model generalize across different objects.
+        mosaic = 0, #(0.0 - 1.0) Adds mosaic augmentation to the image. Helps the model generalize across different positions, scales, and perspectives.
+        mixup = 0, #(0.0 - 1.0) Adds mixup augmentation to the image. Helps the model generalize across different objects.
         copy_paste = 0.0, #(0.0 - 1.0) Adds copy-paste augmentation to the image. Helps the model generalize across different objects.
-        erasing = 0.0, #(0.0 - 1.0) Adds random erasing augmentation to the image. Helps the model generalize across different objects.
+        erasing = 1, #(0.0 - 1.0) Adds random erasing augmentation to the image. Helps the model generalize across different objects.
         crop_fraction = 0.0, #(0.0 - 1.0) Crops the image by a random fraction of the image size. Helps the model generalize across different positions.
         
     )
